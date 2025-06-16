@@ -26,7 +26,7 @@ keep_playing = True
 clock = pygame.time.Clock()
 
 #loading and scaling the background
-background = pygame.image.load("levels/pygame-logo-level.png")
+background = pygame.image.load("levels/worm-level.png")
 background = pygame.transform.scale(background, (screen_width, screen_height))
 
 #creates a level object with the background image and screen
@@ -58,7 +58,7 @@ while keep_playing:
             keep_playing = False
     
     #fills the screen with black
-    screen.fill((0, 0, 100))
+    screen.fill((94,120,157))
 
     #draws the level
     level.draw_self()
