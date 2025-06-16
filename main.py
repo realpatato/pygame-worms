@@ -1,7 +1,8 @@
 ''' MAIN FILE - HANDLES MAIN GAME LOOP '''
 ''' IMPORTS '''
 #needed for visual aspects of the game
-import pygame
+import pygame #must be version 2.0
+import level_manager as lm
 
 #initializes the pygame module
 pygame.init()
@@ -26,11 +27,8 @@ clock = pygame.time.Clock()
 
 background = pygame.image.load("levels/worm-level.png")
 background = pygame.transform.scale(background, (1000, 500))
-background_mask = pygame.mask.from_surface(background)
-masks = background_mask.connected_components()
-outlines_list = []
-for mask in masks:
-    outlines_list.append(mask.outline())
+
+level = lm.Level(background, screen)
 
 while keep_playing:
     #check for pgame events
@@ -39,15 +37,16 @@ while keep_playing:
         if event.type == pygame.MOUSEBUTTONDOWN:
             #get the mouse position
             mouse_pos = pygame.mouse.get_pos()
-            for i in range(0, len(masks)):
+            foreground_masks = level._foreground._masks
+            for i in range(0, len(foreground_masks)):
                 #ensures it starts at the very end, and goes to the front
                 index = 0 - (i + 1)
                 #gets the object from the list with index
-                enemy_object = masks[index]
+                level_part = foreground_masks[index]
                 #checking for where the mouse is in the sprite rect
-                pos_in_enemy_mask = (mouse_pos[0] - enemy_object.get_rect().x, mouse_pos[1] - enemy_object.get_rect().y)
+                pos_in_enemy_mask = (mouse_pos[0] - level_part.get_rect().x, mouse_pos[1] - level_part.get_rect().y)
                 #checks if the mouse is with the sprite basically
-                if enemy_object.get_rect().collidepoint(*mouse_pos) and enemy_object.get_at(pos_in_enemy_mask):
+                if level_part.get_rect().collidepoint(*mouse_pos) and level_part.get_at(pos_in_enemy_mask):
                     print("CLICK")
         #check for quit
         if event.type == pygame.QUIT:
@@ -55,11 +54,8 @@ while keep_playing:
             keep_playing = False
     
     #fills the screen with black
-    screen.fill((0, 0, 0))
-    
-    screen.blit(background, (0, 0))
-    for mask in outlines_list:
-        pygame.draw.polygon(screen, (255, 0, 0), mask, 2)
+    screen.fill((0, 0, 100))
+    level.draw_self()
 
     #updates the screen
     pygame.display.update()
