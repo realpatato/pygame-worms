@@ -10,7 +10,7 @@ pygame.init()
 ''' SCREEN SETUP '''
 #variables for screen size
 screen_width = 1000
-screen_height = 500
+screen_height = 750
 
 #creates the screen with width and height
 screen = pygame.display.set_mode((screen_width, screen_height))
@@ -25,9 +25,11 @@ keep_playing = True
 #clock to manage framerate
 clock = pygame.time.Clock()
 
-background = pygame.image.load("levels/worm-level.png")
-background = pygame.transform.scale(background, (1000, 500))
+#loading and scaling the background
+background = pygame.image.load("levels/pygame-logo-level.png")
+background = pygame.transform.scale(background, (screen_width, screen_height))
 
+#creates a level object with the background image and screen
 level = lm.Level(background, screen)
 
 while keep_playing:
@@ -37,15 +39,17 @@ while keep_playing:
         if event.type == pygame.MOUSEBUTTONDOWN:
             #get the mouse position
             mouse_pos = pygame.mouse.get_pos()
+            #gets the list of masks in the level
             foreground_masks = level._foreground._masks
+            #iterates over each mask
             for i in range(0, len(foreground_masks)):
                 #ensures it starts at the very end, and goes to the front
                 index = 0 - (i + 1)
-                #gets the object from the list with index
+                #gets the specific part of the level
                 level_part = foreground_masks[index]
-                #checking for where the mouse is in the sprite rect
+                #checking for where the mouse is in the level part rect
                 pos_in_enemy_mask = (mouse_pos[0] - level_part.get_rect().x, mouse_pos[1] - level_part.get_rect().y)
-                #checks if the mouse is with the sprite basically
+                #checks if the mouse is within the level part basically
                 if level_part.get_rect().collidepoint(*mouse_pos) and level_part.get_at(pos_in_enemy_mask):
                     print("CLICK")
         #check for quit
@@ -55,6 +59,8 @@ while keep_playing:
     
     #fills the screen with black
     screen.fill((0, 0, 100))
+
+    #draws the level
     level.draw_self()
 
     #updates the screen
