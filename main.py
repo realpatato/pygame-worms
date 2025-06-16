@@ -1,7 +1,8 @@
 ''' MAIN FILE - HANDLES MAIN GAME LOOP '''
 ''' IMPORTS '''
 #needed for visual aspects of the game
-import pygame #must be version 2.0
+import pygame #must be version 2.0, make sure to update before doing anything else
+#needed for creating levels
 import level_manager as lm
 
 #initializes the pygame module
