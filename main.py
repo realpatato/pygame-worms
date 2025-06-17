@@ -87,8 +87,6 @@ while keep_playing:
             except:
                 pass
 
-    print(overlaps)
-
     for overlap in overlaps:
         screen.blit(overlap, (0, 0))
         overlap_pixels = pygame.PixelArray(overlap)
@@ -100,8 +98,6 @@ while keep_playing:
         overlaps.remove(overlap)
         del overlap_pixels
         del level_part_pixels
-
-    print(overlaps)
 
     #updates the screen
     pygame.display.update()
