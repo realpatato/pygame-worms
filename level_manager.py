@@ -38,6 +38,7 @@ class Foreground:
         self._surface = surface
         mask = pygame.mask.from_surface(self._img) 
         self._masks = mask.connected_components()
+        self._rects = mask.get_bounding_rects()
     
     def draw_self(self):
         ''' Draws the foreground to the screen '''
@@ -46,7 +47,6 @@ class Foreground:
 class Level:
     def __init__(self, img, surface):
         ''' Level Object - Stores the foreground and background '''
-        self._surface = surface
         self._background = Background(img, surface)
         self._foreground = Foreground(img, surface)
 
