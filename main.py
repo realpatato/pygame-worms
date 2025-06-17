@@ -37,6 +37,7 @@ background = pygame.transform.scale(background, (screen_width, screen_height))
 level = lm.Level(background, screen)
 
 explosions = []
+overlaps = []
 
 clicked_and_touched = False
 
@@ -49,6 +50,7 @@ while keep_playing:
             mouse_pos = pygame.mouse.get_pos()
             #gets the list of masks in the level
             foreground_masks = level._foreground._masks
+            explosions.append(ex.Explosion(40, mouse_pos[0], mouse_pos[1]))
             #iterates over each mask
             for i in range(0, len(foreground_masks)):
                 #ensures it starts at the very end, and goes to the front
@@ -60,7 +62,6 @@ while keep_playing:
                 #checks if the mouse is within the level part basically
                 if level_part.get_rect().collidepoint(*mouse_pos) and level_part.get_at(pos_in_enemy_mask):
                     print(mouse_pos)
-                    explosions.append(ex.Explosion(40, mouse_pos[0], mouse_pos[1]))
         #check for quit
         if event.type == pygame.QUIT:
             #set control variable to false
@@ -77,30 +78,31 @@ while keep_playing:
         level_parts_rects = level._foreground._rects
         for i in range(len(level_parts_masks)):
             level_part = level_parts_masks[i]
-            empty_surface = pygame.Surface((level_parts_rects[i].width, level_parts_rects[i].height), pygame.SRCALPHA)
-            overlap_mask = explosion._mask.overlap_mask(level_parts_masks[i], (level_parts_rects[i].x - explosion._rect.x, level_parts_rects[i].y - explosion._rect.y))
+            empty_surface = pygame.Surface((screen.get_width(), screen.get_height()), pygame.SRCALPHA)
+            overlap_mask = explosion._mask.overlap_mask(level_parts_masks[i], (level_part.get_rect().x - explosion._rect.x, level_part.get_rect().y - explosion._rect.y))
             overlap_mask_surface = overlap_mask.to_surface(surface=empty_surface, unsetcolor=(0, 0, 0, 0), setcolor=(255, 255, 255), dest=(explosion._rect.x, explosion._rect.y))
-            screen.blit(overlap_mask_surface, (level_parts_rects[i].x, level_parts_rects[i].y))
-            pygame.draw.rect(screen, (255, 0, 0), level_parts_rects[i], 2)
-            pygame.draw.rect(screen, (255, 0, 0), empty_surface.get_rect(), 2)
-            #screen.blit(level_part.to_surface(unsetcolor=(0, 0, 0, 0)), (0, 0))
-        '''
-        for level_part in level._foreground._masks:
-            empty_surface = pygame.Surface((level_part.get_rect().x, level_part.get_rect().y))
-            overlap_mask = explosion._mask.overlap_mask(level_part, (level_part.get_rect().x - explosion._rect.x, level_part.get_rect().y - explosion._rect.y))
-            overlap_mask_surface = overlap_mask.to_surface(surface=empty_surface, unsetcolor=(0, 0, 0, 0), setcolor=(255, 255, 255))
-            if clicked_and_touched == False:
-                overlap_mask_pixels = pygame.PixelArray(overlap_mask_surface)
-                print(overlap_mask_pixels)
-                del overlap_mask_pixels
-                clicked_and_touched = True
-            print(empty_surface)
-            print(empty_surface.get_rect())
-            print(overlap_mask_surface)
-            screen.blit(overlap_mask_surface, (explosion._rect.x, explosion._rect.y))
-            pygame.draw.rect(screen, (255, 0, 0), overlap_mask.get_rect())
-            '''
-            
+            overlaps.append(overlap_mask_surface)
+            try:
+                explosions.remove(explosion)
+            except:
+                pass
+
+    print(overlaps)
+
+    for overlap in overlaps:
+        screen.blit(overlap, (0, 0))
+        overlap_pixels = pygame.PixelArray(overlap)
+        level_part_pixels = pygame.PixelArray(level._foreground._img)
+        for i in range(len(level_part_pixels)):
+            for k in range(len(level_part_pixels[i])):
+                if level_part_pixels[i][k] != 0 and overlap_pixels[i][k] != 0:
+                    level_part_pixels[i][k] = pygame.Color(0, 0, 0, 0)
+        overlaps.remove(overlap)
+        del overlap_pixels
+        del level_part_pixels
+
+    print(overlaps)
+
     #updates the screen
     pygame.display.update()
 
