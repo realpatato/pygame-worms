@@ -53,17 +53,19 @@ class Explosion(pygame.sprite.Sprite):
             overlaps.append(overlap_mask_surface)
         #returns a list of overlaps
         return overlaps
-
-    def find_empty_overlaps(self, pixel_array):
-        ''' Finds empty overlaps to prevent lag '''
-        #iterates over each row in the pixel array
-        for i in range(len(pixel_array)):
-            #checks if the value has anything besides 0
-            if len(set(pixel_array[i])) != 1:
-                #returns true since there is an overlap
-                return True
-        #returns false since no overlap is there
-        return False
+    
+    def find_array_indexes(self):
+        ''' Gets the array indexes (another lag preventor) '''
+        #gets the rect x and sets it to the row start
+        row_start = self._rect.x
+        #gets the rect y and sets it to the column start
+        col_start = self._rect.y
+        #gets the x at the end of the rect and sets it to the row end
+        row_end = self._rect.right
+        #gets the y at the end of the rect and sets it to the column end
+        col_end = self._rect.bottom
+        #returns all of the indexes
+        return (row_start, col_start, row_end, col_end)
 
     def remove_pixels(self, level, overlaps):
         ''' Removes pixels from the level '''
@@ -72,21 +74,20 @@ class Explosion(pygame.sprite.Sprite):
             #gets the pixels of the overlaps
             overlap_pixels = pygame.PixelArray(overlap)
             #checks if there even is any overlap
-            overlap_exist = self.find_empty_overlaps(overlap_pixels)
-            #removes stuff if there is a overlap
-            if overlap_exist:
-                #gets the pixels of the level
-                level_pixels = pygame.PixelArray(level._foreground._img)
-                #iterates over the rows
-                for i in range(len(level_pixels)):
-                    #and the columns
-                    for k in range(len(level_pixels[i])):
-                        #checks if both pixels are not 0 - 0 is the value when there is nothing there
-                        if level_pixels[i][k] != 0 and overlap_pixels[i][k] != 0:
-                            #if the overlap matches, it removes the pixels by making it invisible
-                            level_pixels[i][k] = pygame.Color(0, 0, 0, 0)
-                #deletes the level pixels, to unlock them
-                del level_pixels
+            #overlap_exist = self.find_empty_overlaps(overlap_pixels)
+            indexes = self.find_array_indexes()
+            #gets the pixels of the level
+            level_pixels = pygame.PixelArray(level._foreground._img)
+            #iterates over the rows
+            for i in range(indexes[0], indexes[2]):
+                #and the columns
+                for k in range(indexes[1], indexes[3]):
+                    #checks if both pixels are not 0 - 0 is the value when there is nothing there
+                    if level_pixels[i][k] != 0 and overlap_pixels[i][k] != 0:
+                        #if the overlap matches, it removes the pixels by making it invisible
+                        level_pixels[i][k] = pygame.Color(0, 0, 0, 0)
+            #deletes the level pixels, to unlock them
+            del level_pixels
             #deletes the overlap pixels, to unlock them
             del overlap_pixels
 
