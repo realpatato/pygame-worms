@@ -1,8 +1,7 @@
 ''' MAIN FILE - HANDLES MAIN GAME LOOP '''
 ''' IMPORTS '''
 #needed for visual aspects of the game
-import pygame
-import pygame.mask #must be version 2.0, make sure to update before doing anything else
+import pygame #must be version 2.0, make sure to update before doing anything else
 #needed for creating levels
 import level_manager as lm
 #needed for explosions
@@ -30,7 +29,7 @@ keep_playing = True
 clock = pygame.time.Clock()
 
 #loading and scaling the background
-background = pygame.image.load("levels/pygame-logo-level.png")
+background = pygame.image.load("levels/worm-level.png")
 background = pygame.transform.scale(background, (screen_width, screen_height))
 
 #creates a level object with the background image and screen

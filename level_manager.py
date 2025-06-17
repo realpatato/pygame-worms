@@ -23,7 +23,7 @@ class Background:
         #iterates over each of the mask segments
         for mask in all_masks:
             #draws the section over the image on the surface
-            surface.blit(mask.to_surface(setcolor=(50, 50, 50, 245), unsetcolor=(0,0,0,0)), (0, 0))
+            surface.blit(mask.to_surface(setcolor=(50, 50, 50, 240), unsetcolor=(0,0,0,0)), (0, 0))
         #returns the surface
         return surface
     
@@ -36,10 +36,13 @@ class Foreground:
         ''' Foreground Object - Stores the image and the collision '''
         self._img = img
         self._surface = surface
+        self.set_masks()
+    
+    def set_masks(self):
         mask = pygame.mask.from_surface(self._img) 
         self._masks = mask.connected_components()
         self._rects = mask.get_bounding_rects()
-    
+
     def draw_self(self):
         ''' Draws the foreground to the screen '''
         self._surface.blit(self._img, (0, 0))
