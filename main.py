@@ -46,20 +46,10 @@ while keep_playing:
         if event.type == pygame.MOUSEBUTTONDOWN:
             #get the mouse position
             mouse_pos = pygame.mouse.get_pos()
-            #gets the list of masks in the level
-            foreground_masks = level._foreground._masks
-            explosions.append(ex.Explosion(40, mouse_pos[0], mouse_pos[1]))
-            #iterates over each mask
-            for i in range(0, len(foreground_masks)):
-                #ensures it starts at the very end, and goes to the front
-                index = 0 - (i + 1)
-                #gets the specific part of the level
-                level_part = foreground_masks[index]
-                #checking for where the mouse is in the level part rect
-                pos_in_enemy_mask = (mouse_pos[0] - level_part.get_rect().x, mouse_pos[1] - level_part.get_rect().y)
-                #checks if the mouse is within the level part basically
-                if level_part.get_rect().collidepoint(*mouse_pos) and level_part.get_at(pos_in_enemy_mask):
-                    print(mouse_pos)
+            #get the mouse object for checking which button
+            mouse_button = pygame.mouse.get_pressed()
+            if mouse_button[0]:
+                explosions.append(ex.Explosion(40, mouse_pos[0], mouse_pos[1]))
         #check for quit
         if event.type == pygame.QUIT:
             #set control variable to false

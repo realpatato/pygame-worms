@@ -54,28 +54,37 @@ class Explosion(pygame.sprite.Sprite):
         #returns a list of overlaps
         return overlaps
     
-    def find_array_indexes(self):
+    def find_array_indexes(self, screen):
         ''' Gets the array indexes (another lag preventor) '''
         #gets the rect x and sets it to the row start
         row_start = self._rect.x
         #gets the rect y and sets it to the column start
         col_start = self._rect.y
-        #gets the x at the end of the rect and sets it to the row end
-        row_end = self._rect.right
-        #gets the y at the end of the rect and sets it to the column end
-        col_end = self._rect.bottom
+        #checks if the circle is going off-screen on the x-axis
+        if self._rect.right > screen.get_width():
+            #makes the ending index the width of the screen to prevent crashes
+            row_end = screen.get_width()
+        else:
+            #gets the x at the end of the rect and sets it to the row end
+            row_end = self._rect.right
+        #checks if the circle is going off-screen on the y-axis
+        if self._rect.bottom > screen.get_height():
+            #makes the ending index the height of the screen to prevent crashes
+            col_end = screen.get_height()
+        else:
+            #gets the y at the end of the rect and sets it to the column end
+            col_end = self._rect.bottom
         #returns all of the indexes
         return (row_start, col_start, row_end, col_end)
 
-    def remove_pixels(self, level, overlaps):
+    def remove_pixels(self, screen, level, overlaps):
         ''' Removes pixels from the level '''
         #iterating over overlaps
         for overlap in overlaps:
             #gets the pixels of the overlaps
             overlap_pixels = pygame.PixelArray(overlap)
             #checks if there even is any overlap
-            #overlap_exist = self.find_empty_overlaps(overlap_pixels)
-            indexes = self.find_array_indexes()
+            indexes = self.find_array_indexes(screen)
             #gets the pixels of the level
             level_pixels = pygame.PixelArray(level._foreground._img)
             #iterates over the rows
@@ -100,7 +109,7 @@ class Explosion(pygame.sprite.Sprite):
         #generates the overlaps
         overlaps = self.gen_overlap(level, screen)
         #removes the pixels of the level
-        self.remove_pixels(level, overlaps)
+        self.remove_pixels(screen, level, overlaps)
         #updates the mask of the level
         level._foreground.set_masks()
     
