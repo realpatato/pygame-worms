@@ -48,7 +48,9 @@ while keep_playing:
             mouse_pos = pygame.mouse.get_pos()
             #get the mouse object for checking which button
             mouse_button = pygame.mouse.get_pressed()
+            #checks if the left mouse button was clicked (temp)
             if mouse_button[0]:
+                #creates an explosion at the mouse position (also temp)
                 explosions.append(ex.Explosion(40, mouse_pos[0], mouse_pos[1]))
         #check for quit
         if event.type == pygame.QUIT:
